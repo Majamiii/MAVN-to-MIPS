@@ -38,3 +38,25 @@ Ovo radi jer FSM ne prepoznaje velika slova (nisu u supportedCharacters), pa ona
     iz private u public
 - Main izmenjen, dodata syntax.Do() kako bi se uradila sintaksna analiza
 - generalno sve u sintaksnoj iskopirano sa 7. vezbi samo je uklonjen taj main i promenjena su pravila i prilagodjeni tokeni onima koji su zapisani u Types.Helper
+
+
+------ DODATE INSTRUKCIJE ---------
+
+and rd, rs, rt
+jr rs
+slt rd, rs, rt
+
+aritmeticko-logicka: and rd, rs, rt
+Put the logical AND of register rs 
+and rt into register rd
+
+jump register
+jr rs
+Unconditionally jump to the 
+instruction whose address is in 
+register rs
+
+set less than
+slt rd, rs, rt
+Set register rd to 1 if register rs is 
+less than rt, and to 0 otherwise.

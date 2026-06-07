@@ -10,7 +10,7 @@ void main()
 {
 	try
 	{
-		std::string fileName = ".\\..\\examples\\simple.mavn";
+		std::string fileName = ".\\..\\examples\\commands.mavn";
 		bool retVal = false;
 
 		LexicalAnalysis lex;
@@ -35,13 +35,16 @@ void main()
 
 		SyntaxAnalysis syntax(lex);
 
+		cout << endl << "---------------------------------------------" << endl;
+		cout<< "Starting syntax analysis..." << endl<<endl;
+
 		if (syntax.Do())
 		{
-			cout << "Syntax analysis finished successfully!" << endl;
+			cout << endl <<  "Syntax analysis finished successfully!" << endl;
 		}
 		else
 		{
-			cout << "Syntax analysis failed!" << endl;
+			cout << endl << "Syntax analysis failed!" << endl;
 		}
 
 	}

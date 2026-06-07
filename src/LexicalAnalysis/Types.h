@@ -36,6 +36,10 @@ enum TokenType
 	T_B,			// b
 	T_NOP,			// nop
 
+	T_AND,			// and
+	T_JR,			// jr
+	T_SLT,			// slt
+
 	// operators
 	T_COMMA,		//,
 	T_L_PARENT,		//(

@@ -77,20 +77,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Constants.h" />
-    <ClInclude Include="FiniteStateMachine.h" />
     <ClInclude Include="IR.h" />
-    <ClInclude Include="LexicalAnalysis.h" />
+    <ClInclude Include="LexicalAnalysis\Constants.h" />
+    <ClInclude Include="LexicalAnalysis\FiniteStateMachine.h" />
+    <ClInclude Include="LexicalAnalysis\LexicalAnalysis.h" />
+    <ClInclude Include="LexicalAnalysis\Token.h" />
+    <ClInclude Include="LexicalAnalysis\Types.h" />
     <ClInclude Include="SyntaxAnalysis\SyntaxAnalysis.h" />
-    <ClInclude Include="Token.h" />
-    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FiniteStateMachine.cpp" />
-    <ClCompile Include="LexicalAnalysis.cpp" />
+    <ClCompile Include="LexicalAnalysis\FiniteStateMachine.cpp" />
+    <ClCompile Include="LexicalAnalysis\LexicalAnalysis.cpp" />
+    <ClCompile Include="LexicalAnalysis\Token.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SyntaxAnalysis\SyntaxAnalysis.cpp" />
-    <ClCompile Include="Token.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

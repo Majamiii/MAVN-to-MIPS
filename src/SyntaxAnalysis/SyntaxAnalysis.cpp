@@ -21,9 +21,6 @@ bool SyntaxAnalysis::Do()
 
 	Q();
 
-	if (!errorFound)
-		cout << "Syntax OK" << endl;
-
 	return !errorFound;
 }
 
@@ -62,8 +59,11 @@ void SyntaxAnalysis::eat(TokenType t)
 
 Token SyntaxAnalysis::getNextToken()
 {
-	if (tokenIterator == lexicalAnalysis.getTokenList().end())
-		throw runtime_error("End of input file reached");
+	if (tokenIterator == lexicalAnalysis.getTokenList().end()) {
+		Token eofToken;
+		eofToken.makeEofToken();
+		return eofToken;
+	}
 	return *tokenIterator++;
 }
 
@@ -219,5 +219,48 @@ void SyntaxAnalysis::E()
 	}
 	else if (currentToken.getType() == T_NOP) {
 		eat(T_NOP);
+	}
+	/*
+	
+		------ DODATE INSTRUKCIJE ---------
+
+		aritmeticko-logicka: and rd, rs, rt
+		Put the logical AND of register rs 
+		and rt into register rd
+
+		jump register
+		jr rs
+		Unconditionally jump to the 
+		instruction whose address is in 
+		register rs
+
+		set less than
+		slt rd, rs, rt
+		Set register rd to 1 if register rs is 
+		less than rt, and to 0 otherwise.
+	*/
+	else if (currentToken.getType() == T_AND) {
+		eat(T_AND);
+		eat(T_R_ID);
+		eat(T_COMMA);
+		eat(T_R_ID);
+		eat(T_COMMA);
+		eat(T_R_ID);
+	}
+	else if (currentToken.getType() == T_JR) {
+		eat(T_JR);
+		eat(T_R_ID);
+	}
+	else if (currentToken.getType() == T_SLT) {
+		eat(T_SLT);
+		eat(T_R_ID);
+		eat(T_COMMA);
+		eat(T_R_ID);
+		eat(T_COMMA);
+		eat(T_R_ID);
+	}
+	else {
+		printSyntaxError(currentToken);
+		errorFound = true;
 	}
 }

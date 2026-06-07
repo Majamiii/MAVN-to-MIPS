@@ -10,7 +10,7 @@
 /**
  * Number of states in FSM
  */
-#define NUM_STATES				47
+#define NUM_STATES				53
 
 /**
  * Number of supported characters
