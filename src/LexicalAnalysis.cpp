@@ -32,6 +32,64 @@ bool LexicalAnalysis::Do()
 				return true;
 			case T_WHITE_SPACE:
 				continue;
+			case T_FUNC:
+			{
+				tokenList.push_back(token);
+
+				// rucno se preskacu razmaci
+				Token nextToken = getNextTokenLex();
+				while (nextToken.getType() == T_WHITE_SPACE)
+					nextToken = getNextTokenLex();
+
+				// provera da li ime funkcije krece malim slovom
+				if (nextToken.getType() != T_ID)
+				{
+					errorToken = nextToken;
+					cout << "Syntax error! Expected name starting with lowercase letter after _func, but got: "
+						<< nextToken.getValue() << endl;
+					tokenList.push_back(nextToken);
+					return false;
+				}
+
+				// ime je validno, dodaj i njega
+				tokenList.push_back(nextToken);
+				break;
+			}
+			case T_MEM:
+			{
+				tokenList.push_back(token);
+
+				Token nextToken = getNextTokenLex();
+				while (nextToken.getType() == T_WHITE_SPACE)
+					nextToken = getNextTokenLex();
+
+				if (nextToken.getType() != T_M_ID)
+				{
+					errorToken = nextToken;
+					tokenList.push_back(nextToken);
+					return false;
+				}
+				tokenList.push_back(nextToken);
+				break;
+			}
+
+			case T_REG:
+			{
+				tokenList.push_back(token);
+
+				Token nextToken = getNextTokenLex();
+				while (nextToken.getType() == T_WHITE_SPACE)
+					nextToken = getNextTokenLex();
+
+				if (nextToken.getType() != T_R_ID)
+				{
+					errorToken = nextToken;
+					tokenList.push_back(nextToken);
+					return false;
+				}
+				tokenList.push_back(nextToken);
+				break;
+			}
 			default:
 				tokenList.push_back(token);
 				break;

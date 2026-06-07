@@ -10,7 +10,7 @@ void main()
 {
 	try
 	{
-		std::string fileName = ".\\..\\examples\\multiply.mavn";
+		std::string fileName = ".\\..\\examples\\simple.mavn";
 		bool retVal = false;
 
 		LexicalAnalysis lex;

@@ -1,5 +1,25 @@
 realizovan kod:
 
+------ LEKSICKA ANALIZA I VALIDACIJA -----------
+FSM: 
+	/* state 21 */	{21,21,21,21,21,21,21,21,21,21,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},		// T_M_ID
+	/* state 22 */	{22,22,22,22,22,22,22,22,22,22,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},		// T_R_ID
+- fsm prelazi u stanje 41 (error) ukoliko je u nastavku slovo kod reg i mem
+
+- za func i pocinjanje malim slovom je uradjeno u Do() kod leksera
+
+Validacija deklaracija _func, _mem, _reg
+_mem i _reg — validacija u FSM-u
+Stanja 21 i 22 su međustanja — dostižu se kada FSM pročita samo m ili r nakon _. U tom trenutku još nije jasno da li je to validno ime memorijske/registarske promenljive, pa token ostaje T_ID.
+Tek kada cifra sledi, FSM prelazi u stanja 45 (T_M_ID) ili 46 (T_R_ID) koja emituju ispravan tip tokena. Ako umesto cifre dođe slovo, FSM ide u stanje 20 (T_ID) — nije validno _mem/_reg ime. Ako dođe _, ide u stanje 41 (T_ERROR).
+Ovo je prirodno mesto za ovu validaciju jer su pravila čisto leksička — format imena je precizno definisan (m + samo cifre, r + samo cifre).
+
+_func — validacija u lexeru (Do() metoda)
+Ime funkcije mora početi malim slovom, a nastavak može biti kombinacija slova i brojeva — što je identično opštem T_ID tokenu koji FSM već prepoznaje. Nije imalo smisla praviti novo stanje u FSM-u samo zbog prve pozicije.
+Umesto toga, kada Do() naiđe na T_FUNC token, ručno čita sledeći token (preskačući whitespace koji lexer ionako odbacuje) i proverava da li je T_ID. Ako nije — greška.
+Ovo radi jer FSM ne prepoznaje velika slova (nisu u supportedCharacters), pa ona uvek daju T_ERROR. Cifre na početku daju T_NUM. Dakle T_ID garantuje da ime počinje malim slovom.
+
+
 
 ------ SINTAKSNA ANALIZA ----------
 
@@ -13,4 +33,3 @@ realizovan kod:
     iz private u public
 - Main izmenjen, dodata syntax.Do() kako bi se uradila sintaksna analiza
 - generalno sve u sintaksnoj iskopirano sa 7. vezbi samo je uklonjen taj main i promenjena su pravila i prilagodjeni tokeni onima koji su zapisani u Types.Helper
-
