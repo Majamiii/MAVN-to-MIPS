@@ -53,12 +53,12 @@ void main()
 			cout << endl << "Syntax analysis failed!" << endl;
 		}
 
-		Instructions& instructions = getInstructions();
-		Variables& variables = getVariables();
+		cout << endl << "---------------------------------------------" << endl;
+		cout << "Starting liveliness analysis..." << endl << endl;
 
+		Instructions& instructions = syntax.getInstructions();
+		Variables& variables = syntax.getVariables();
 
-		// 1) build instruction list (some nodes from pseudo code)
-		makeExample();
 		cout << "Variables list:" << endl;
 		printVariables(variables);
 		cout << endl << endl << endl;
@@ -66,18 +66,13 @@ void main()
 		printInstructions(instructions);
 		cout << endl << endl;
 
-
-		// 2) do liveness analysis of variables using control flow graph
 		livenessAnalysis(instructions);
 		cout << endl;
 		cout << "Instruction list after LIVENESS ANALYSIS:" << endl;
 		printInstructions(instructions);
 		cout << endl << endl;
 
-
-		cout << "END" << endl;
-
-		// getchar();
+		cout << "Liveliness analysis finished successfully!" << endl;
 
 	}
 	catch (runtime_error e)

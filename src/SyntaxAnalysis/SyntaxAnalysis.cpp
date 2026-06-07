@@ -20,7 +20,7 @@ bool SyntaxAnalysis::Do()
 	//TO DO: Call function for the starting non-terminal symbol
 
 	Q();
-
+	buildControlFlow();
 	return !errorFound;
 }
 
@@ -153,72 +153,205 @@ void SyntaxAnalysis::E()
 	   E → bltz rid, id 
 	   E → nop
 	*/
-	if (currentToken.getType() == T_ADD) {
+	else if (currentToken.getType() == T_ADD) {
 		eat(T_ADD);
+		// rd (dst)
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		// rs, rt (src)
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rt = currentToken.getValue();
 		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
+			buildInstruction(I_ADD, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_ADDI) {
 		eat(T_ADDI);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
 		eat(T_NUM);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			buildInstruction(I_ADDI, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_SUB) {
 		eat(T_SUB);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rt = currentToken.getValue();
 		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
+			buildInstruction(I_SUB, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_LA) {
 		eat(T_LA);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string mid = currentToken.getValue();
 		eat(T_M_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(mid, Variable::MEM_VAR));
+			buildInstruction(I_LA, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_LW) {
 		eat(T_LW);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
 		eat(T_NUM);
 		eat(T_L_PARENT);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_R_PARENT);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			buildInstruction(I_LW, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_LI) {
 		eat(T_LI);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
 		eat(T_NUM);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			buildInstruction(I_LI, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_SW) {
 		eat(T_SW);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
 		eat(T_NUM);
 		eat(T_L_PARENT);
+		std::string rb = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_R_PARENT);
+
+		if (!errorFound) {
+			Variables dst, src;
+			// sw nema dst u smislu definicije — samo koristi registre
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rb, Variable::REG_VAR));
+			buildInstruction(I_SW, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_B) {
 		eat(T_B);
-		eat(T_ID);
+		eat(T_ID); // labela
+
+		if (!errorFound) {
+			Variables dst, src;
+			buildInstruction(I_B, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_BLTZ) {
 		eat(T_BLTZ);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
-		eat(T_ID);
+		eat(T_ID); // labela
+
+		if (!errorFound) {
+			Variables dst, src;
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			buildInstruction(I_BLTZ, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_NOP) {
 		eat(T_NOP);
+		if (!errorFound) {
+			Variables dst, src;
+			buildInstruction(I_NOP, dst, src);
+		}
+	}
+	else if (currentToken.getType() == T_AND) {
+		eat(T_AND);
+		std::string rd = currentToken.getValue();
+		eat(T_R_ID);
+		eat(T_COMMA);
+		std::string rs = currentToken.getValue();
+		eat(T_R_ID);
+		eat(T_COMMA);
+		std::string rt = currentToken.getValue();
+		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
+			buildInstruction(I_AND, dst, src);
+		}
+	}
+	else if (currentToken.getType() == T_JR) {
+		eat(T_JR);
+		std::string rs = currentToken.getValue();
+		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			buildInstruction(I_JR, dst, src);
+		}
+	}
+	else if (currentToken.getType() == T_SLT) {
+		eat(T_SLT);
+		std::string rd = currentToken.getValue();
+		eat(T_R_ID);
+		eat(T_COMMA);
+		std::string rs = currentToken.getValue();
+		eat(T_R_ID);
+		eat(T_COMMA);
+		std::string rt = currentToken.getValue();
+		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
+			buildInstruction(I_SLT, dst, src);
+		}
 	}
 	/*
 	
@@ -241,26 +374,92 @@ void SyntaxAnalysis::E()
 	*/
 	else if (currentToken.getType() == T_AND) {
 		eat(T_AND);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rt = currentToken.getValue();
 		eat(T_R_ID);
-	}
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
+			buildInstruction(I_AND, dst, src);
+		}
+		}
 	else if (currentToken.getType() == T_JR) {
 		eat(T_JR);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			buildInstruction(I_JR, dst, src);
+		}
 	}
 	else if (currentToken.getType() == T_SLT) {
 		eat(T_SLT);
+		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string rt = currentToken.getValue();
 		eat(T_R_ID);
+
+		if (!errorFound) {
+			Variables dst, src;
+			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
+			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
+			buildInstruction(I_SLT, dst, src);
+		}
 	}
 	else {
 		printSyntaxError(currentToken);
 		errorFound = true;
 	}
 }
+
+
+Variable* SyntaxAnalysis::findOrAddVariable(const std::string& name, Variable::VariableType type) {
+	for (Variable* v : m_variables) {
+		if (v->m_name == name) {
+			return v;
+		}
+	}
+	Variable* v = new Variable(name, m_variables.size());
+	v->m_type = type;
+	m_variables.push_back(v);
+	return v;
+}
+
+void SyntaxAnalysis::buildInstruction(InstructionType type, Variables& dst, Variables& src) {
+	Instruction* instr = new Instruction(m_position++, type, dst, src);
+	// def = dst, use = src
+	instr->m_def = dst;
+	instr->m_use = src;
+	m_instructions.push_back(instr);
+}
+
+void SyntaxAnalysis::buildControlFlow() {
+	auto it = m_instructions.begin();
+	while (it != m_instructions.end()) {
+		auto next = std::next(it);
+		if (next != m_instructions.end()) {
+			(*it)->m_succ.push_back(*next);
+			(*next)->m_pred.push_back(*it);
+		}
+		it = next;
+	}
+}
+
+
+Instructions& SyntaxAnalysis::getInstructions() { return m_instructions; }
+Variables& SyntaxAnalysis::getVariables() { return m_variables; }

@@ -16,7 +16,16 @@ public:
 	*/
 	bool Do();
 
+	Instructions& getInstructions();
+	Variables& getVariables();
+
 private:
+	Instructions m_instructions;
+	Variables m_variables;
+	int m_position = 0;
+	Variable* findOrAddVariable(const std::string& name, Variable::VariableType type);
+	void buildInstruction(InstructionType type, Variables& dst, Variables& src);
+	void buildControlFlow();
 	/**
 	* Prints the error message, and token that caused the syntax error
 	*/

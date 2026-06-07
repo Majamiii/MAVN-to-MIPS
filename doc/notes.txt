@@ -60,3 +60,46 @@ set less than
 slt rd, rs, rt
 Set register rd to 1 if register rs is 
 less than rt, and to 0 otherwise.
+
+
+
+------ ANALIZA ZIVOTNOG VEKA -------------
+Parser (SyntaxAnalysis) je pre naših izmena samo proveravao sintaksu — prolazio kroz tokene, javljao greške, i zaboravljao sve.
+Mi smo ga naterali da pamti šta je pročitao — za svaku instrukciju koju pronađe, sačuva:
+
+koji registri se pišu (dst/def)
+koji registri se čitaju (src/use)
+
+To se čuva u listi Instructions i Variables.
+
+Zašto:
+LivenessAnalysis treba da zna za svaku instrukciju koje varijable su žive (u upotrebi) u tom trenutku —
+to je osnova za alokaciju registara (koji registar dodeliti kojoj varijabli).
+
+Da bi to mogao da uradi, mora da ima listu instrukcija sa def/use informacijama.
+Pre naših izmena, ta lista se punila ručno kroz makeExample() — što je bila samo simulacija. 
+Sada se puni automatski iz pravog koda tokom parsiranja.
+
+Ukratko: parser sada gradi ulaz za liveness analysis, umesto da ga neko piše ručno.
+
+
+sve pomocne funkcije:
+findOrAddVariable — traži varijablu po imenu u listi, ako ne postoji kreira je i dodaje:
+cpp// Da ne bi imali duplikate — r1 je uvek isti objekat
+Variable* findOrAddVariable(const std::string& name, Variable::VariableType type);
+
+buildInstruction — kreira Instruction objekat i dodaje ga u listu:
+cpp// Postavlja position, type, def, use i gura u m_instructions
+void buildInstruction(InstructionType type, Variables& dst, Variables& src);
+dst → ide u m_def (registar koji se piše)
+src → ide u m_use (registri koji se čitaju)
+
+buildControlFlow — nakon što su sve instrukcije napravljene, prolazi kroz listu i povezuje ih:
+cpp// instrukcija[i].succ = instrukcija[i+1]
+// instrukcija[i+1].pred = instrukcija[i]
+void buildControlFlow();
+Bez ovoga SUCC/PRED bi bili prazni i liveness analiza ne bi mogla da propagira IN/OUT skupove unazad kroz graf.
+
+getInstructions / getVariables — getteri koji vraćaju reference na liste, da ih main.cpp može koristiti umesto makeExample():
+cppInstructions& getInstructions() { return m_instructions; }
+Variables& getVariables()       { return m_variables; }
