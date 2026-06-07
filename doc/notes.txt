@@ -1,0 +1,16 @@
+realizovan kod:
+
+
+------ SINTAKSNA ANALIZA ----------
+
+- dodata sintaksna analiza kao u dokumentaciji
+- reorganizovan kod -> podfolder sa SyntaxAnalysis koji je dodat u Solution
+- u Token.h promenjena funkcija public:
+	/**
+	 * Helper function to get string representation of token type
+	 */
+	string tokenTypeToString(TokenType t);
+    iz private u public
+- Main izmenjen, dodata syntax.Do() kako bi se uradila sintaksna analiza
+- generalno sve u sintaksnoj iskopirano sa 7. vezbi samo je uklonjen taj main i promenjena su pravila i prilagodjeni tokeni onima koji su zapisani u Types.Helper
+

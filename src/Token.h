@@ -21,12 +21,12 @@ private:
 	 */
 	string value;
 	
+public:
 	/**
 	 * Helper function to get string representation of token type
 	 */
 	string tokenTypeToString(TokenType t);
 
-public:
 
 	Token(void);
 

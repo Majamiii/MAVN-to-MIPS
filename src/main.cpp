@@ -1,4 +1,5 @@
 #include "LexicalAnalysis.h"
+#include "./SyntaxAnalysis/SyntaxAnalysis.h"
 
 #include <iostream>
 #include <exception>
@@ -9,7 +10,7 @@ void main()
 {
 	try
 	{
-		std::string fileName = ".\\..\\examples\\simple.mavn";
+		std::string fileName = ".\\..\\examples\\multiply.mavn";
 		bool retVal = false;
 
 		LexicalAnalysis lex;
@@ -30,6 +31,17 @@ void main()
 		{
 			lex.printLexError();
 			throw runtime_error("\nException! Lexical analysis failed!\n");
+		}
+
+		SyntaxAnalysis syntax(lex);
+
+		if (syntax.Do())
+		{
+			cout << "Syntax analysis finished successfully!" << endl;
+		}
+		else
+		{
+			cout << "Syntax analysis failed!" << endl;
 		}
 
 	}
