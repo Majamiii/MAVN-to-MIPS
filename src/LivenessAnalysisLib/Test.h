@@ -1,7 +1,7 @@
 #ifndef __TEST_H__
 #define __TEST_H__
 
-#include "Types.h"
+#include "../LexicalAnalysis/Types.h"
 
 /**
  * @brief Use this function to get instructions list

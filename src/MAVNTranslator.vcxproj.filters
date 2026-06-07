@@ -36,6 +36,30 @@
     <ClInclude Include="LexicalAnalysis\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LivenessAnalysis\Instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysis\auto_link.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysis\LivenessAnalysis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysis\Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysis\Variable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysisLib\Instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysisLib\Test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LivenessAnalysisLib\Variable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -51,6 +75,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LexicalAnalysis\FiniteStateMachine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LivenessAnalysis\LivenessAnalysis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LivenessAnalysisLib\Instruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LivenessAnalysisLib\Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LivenessAnalysisLib\Variable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

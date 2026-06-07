@@ -83,12 +83,24 @@
     <ClInclude Include="LexicalAnalysis\LexicalAnalysis.h" />
     <ClInclude Include="LexicalAnalysis\Token.h" />
     <ClInclude Include="LexicalAnalysis\Types.h" />
+    <ClInclude Include="LivenessAnalysisLib\Instruction.h" />
+    <ClInclude Include="LivenessAnalysisLib\Test.h" />
+    <ClInclude Include="LivenessAnalysisLib\Variable.h" />
+    <ClInclude Include="LivenessAnalysis\auto_link.h" />
+    <ClInclude Include="LivenessAnalysis\Instruction.h" />
+    <ClInclude Include="LivenessAnalysis\LivenessAnalysis.h" />
+    <ClInclude Include="LivenessAnalysis\Test.h" />
+    <ClInclude Include="LivenessAnalysis\Variable.h" />
     <ClInclude Include="SyntaxAnalysis\SyntaxAnalysis.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LexicalAnalysis\FiniteStateMachine.cpp" />
     <ClCompile Include="LexicalAnalysis\LexicalAnalysis.cpp" />
     <ClCompile Include="LexicalAnalysis\Token.cpp" />
+    <ClCompile Include="LivenessAnalysisLib\Instruction.cpp" />
+    <ClCompile Include="LivenessAnalysisLib\Test.cpp" />
+    <ClCompile Include="LivenessAnalysisLib\Variable.cpp" />
+    <ClCompile Include="LivenessAnalysis\LivenessAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SyntaxAnalysis\SyntaxAnalysis.cpp" />
   </ItemGroup>

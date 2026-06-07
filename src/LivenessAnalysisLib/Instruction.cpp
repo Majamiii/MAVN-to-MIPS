@@ -9,39 +9,39 @@ static void printInstructionsPos(Instructions instrs)
 
 	for (iter = instrs.begin(); iter != instrs.end(); iter++)
 	{
-		printf("%d ", (*iter)->pos);
+		printf("%d ", (*iter)->m_position);
 	}
 }
 
 
 static void printInstruction(Instruction* instr)
 {
-	printf("%d\n\n", instr->pos);
+	printf("%d\n\n", instr->m_position);
 
-	printf("Type: %d\n\n", instr->type);
+	printf("Type: %d\n\n", instr->m_type);
 
 	printf("\nPRED\t");
-	printInstructionsPos(instr->pred);
+	printInstructionsPos(instr->m_pred);
 	printf("\n");
 
 	printf("\nSUCC:\t");
-	printInstructionsPos(instr->succ);
+	printInstructionsPos(instr->m_succ);
 	printf("\n");
 
 	printf("\nUSE:\t");
-	printVariablesNames(instr->use);
+	printVariablesNames(instr->m_use);
 	printf("\n");
 	
 	printf("DEF:\t");
-	printVariablesNames(instr->def);
+	printVariablesNames(instr->m_def);
 	printf("\n");
 	
 	printf("IN:\t");
-	printVariablesNames(instr->in);
+	printVariablesNames(instr->m_in);
 	printf("\n");
 
 	printf("OUT:\t");
-	printVariablesNames(instr->out);
+	printVariablesNames(instr->m_out);
 	printf("\n");
 }
 

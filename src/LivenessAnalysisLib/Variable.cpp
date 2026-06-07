@@ -3,13 +3,13 @@
 
 void printVariable(Variable* variable)
 {
-	printf("(Name: %s, Pos: %d, Assignment: %d) ", variable->name.c_str(), variable->pos, variable->assignment);
+	printf("(Name: %s, Pos: %d, Assignment: %d) ", variable->m_name.c_str(), variable->m_position, variable->m_assignment);
 }
 
 
 void printVariableName(Variable* variable)
 {
-	printf("%s", variable->name.c_str());
+	printf("%s", variable->m_name.c_str());
 }
 
 

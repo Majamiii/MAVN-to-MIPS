@@ -1,7 +1,7 @@
 #ifndef __LIVENESS_ANALYSIS__
 #define __LIVENESS_ANALYSIS__
 
-#include "Types.h"
+#include "../LexicalAnalysis/Types.h"
 
 void livenessAnalysis(Instructions instructions);
 
