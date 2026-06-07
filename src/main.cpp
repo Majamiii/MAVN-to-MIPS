@@ -1,4 +1,4 @@
-#include "LexicalAnalysis.h"
+#include "./LexicalAnalysis/LexicalAnalysis.h"
 #include "./SyntaxAnalysis/SyntaxAnalysis.h"
 
 #include <iostream>

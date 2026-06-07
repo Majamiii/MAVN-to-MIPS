@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../LexicalAnalysis.h"
-#include "../Token.h"
-#include "../Types.h"
+#include "../LexicalAnalysis/LexicalAnalysis.h"
 
 class SyntaxAnalysis
 {

@@ -1,5 +1,10 @@
 realizovan kod:
 
+----- ORGANIZACIJA KODA I PROJEKTA --------
+- projekat je nayvan MAVNTranslator
+- leksicka analiza je prebacena u podfolder
+- svaki deo ima svoj folder: leksicka analiza, sintaksna analiza, analiza zivotnog veka i dodeljivanje resursa
+
 ------ LEKSICKA ANALIZA I VALIDACIJA -----------
 FSM: 
 	/* state 21 */	{21,21,21,21,21,21,21,21,21,21,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},		// T_M_ID
