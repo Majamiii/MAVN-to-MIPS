@@ -19,9 +19,9 @@ Variables& getVariables()
 }
 
 
-static Instruction* makeInstruction(unsigned int pPos, InstructionType tType, Variable* dDst, Variable* sSrc1, Variable* sSrc2)
+static InstructionStruct* makeInstruction(unsigned int pPos, InstructionType tType, Variable* dDst, Variable* sSrc1, Variable* sSrc2)
 {
-	Instruction* p = new Instruction();
+	InstructionStruct* p = new InstructionStruct();
 	p->m_position = pPos;
 	p->m_type = tType;
 
@@ -67,7 +67,7 @@ void makeExample()
 	I_SLT,
 	*/
 
-	Instruction *instr1, *instr2, *instr3, *instr4, *instr5, *instr6, *instr7, * instr8, * instr9, * instr10, * instr11, * instr12, * instr13, * instr14;
+	InstructionStruct *instr1, *instr2, *instr3, *instr4, *instr5, *instr6, *instr7, * instr8, * instr9, * instr10, * instr11, * instr12, * instr13, * instr14;
 	instr1 = makeInstruction(1, I_NO_TYPE, a, nullptr, nullptr);
 	instr2 = makeInstruction(2, I_ADD, b, a, nullptr);
 	instr3 = makeInstruction(3, I_ADDI, c, b, nullptr);

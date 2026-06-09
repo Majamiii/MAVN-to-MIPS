@@ -60,6 +60,24 @@
     <ClInclude Include="LivenessAnalysisLib\Variable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceAllocation\auto_link.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAllocation\InterferenceGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAllocation\libLivnessAnalysis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAllocation\libResourceAllocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAllocation\ResourceAllocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceAllocation\Simplification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,5 +107,12 @@
     <ClCompile Include="LivenessAnalysisLib\Variable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceAllocation\ResourceAllocation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ResourceAllocation\libLivenessAnalysis-vc140-mt.lib" />
+    <Library Include="ResourceAllocation\libResourceAllocation-vc140-mt.lib" />
   </ItemGroup>
 </Project>

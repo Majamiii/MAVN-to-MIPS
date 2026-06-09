@@ -7,6 +7,12 @@
 #include "./LivenessAnalysis/Variable.h"
 #include "./LivenessAnalysis/LivenessAnalysis.h"
 
+#include "./ResourceAllocation/ResourceAllocation.h"
+#include "./ResourceAllocation/libResourceAllocation.h"
+#include "./ResourceAllocation/InterferenceGraph.h"
+#include "./ResourceAllocation/Simplification.h"
+#include "./ResourceAllocation/libLivnessAnalysis.h"
+
 #include <iostream>
 #include <exception>
 
@@ -39,6 +45,10 @@ void main()
 			throw runtime_error("\nException! Lexical analysis failed!\n");
 		}
 
+
+		// -----------------------------------------------------------------------------
+
+
 		SyntaxAnalysis syntax(lex);
 
 		cout << endl << "---------------------------------------------" << endl;
@@ -52,6 +62,10 @@ void main()
 		{
 			cout << endl << "Syntax analysis failed!" << endl;
 		}
+
+
+		// -----------------------------------------------------------------------------
+
 
 		cout << endl << "---------------------------------------------" << endl;
 		cout << "Starting liveliness analysis..." << endl << endl;
@@ -73,6 +87,79 @@ void main()
 		cout << endl << endl;
 
 		cout << "Liveliness analysis finished successfully!" << endl;
+
+
+
+		// -----------------------------------------------------------------------------
+
+
+		cout << endl << "---------------------------------------------" << endl;
+		cout << "Starting resource allocation..." << endl << endl;
+
+
+		InterferenceGraph* ig;
+		ig = doInterferenceGraph(&instructions);
+		stack<Variable*>* simplificationStack;
+
+
+		printInterferenceGraph(ig);
+
+		printVariables(*(ig->variables));
+		cout << "\nInstruction list:\n";
+		printInstructions(instructions);
+		cout << "*******************************************************************\n\n\n";
+
+		// 2) simplify
+		simplificationStack = doSimplification(ig, __REG_NUMBER__);
+
+		// 3) spill
+		if (simplificationStack == NULL)
+		{
+			cout << "Spill detected!\n";
+		}
+		else
+		{
+			// 4) select
+			if (doResourceAllocation(simplificationStack, ig) == true)
+			{
+				if (checkResourceAllocation(ig) == true)
+				{
+
+					// 5) remove unnecessary move operation
+					// Instructions* noMoveInstr = removeMove(&instructions);
+
+					// 6) final print
+					cout << "Resource allocation finished successfully!" << endl;
+					printVariables(*(ig->variables));
+					cout << "\nInstruction list:\n";
+					printInstructions(instructions);
+					cout << "*******************************************************************\n\n\n";
+				}
+				else
+				{
+					cout << "Allocation failed!\n";
+				}
+			}
+			else
+			{
+				cout << "Actual spill!\n";
+			}
+		}
+
+
+		// free resources
+		if (ig != NULL && ig->values != NULL)
+		{
+			freeInterferenceGraph(ig);
+		}
+
+
+		cout << endl << endl;
+
+
+
+		// -----------------------------------------------------------------------------
+
 
 	}
 	catch (runtime_error e)

@@ -14,7 +14,7 @@ static void printInstructionsPos(Instructions instrs)
 }
 
 
-static void printInstruction(Instruction* instr)
+static void printInstruction(InstructionStruct* instr)
 {
 	printf("%d\n\n", instr->m_position);
 
@@ -52,7 +52,7 @@ void printInstructions(Instructions instrs)
 
 	for (iter = instrs.begin(); iter != instrs.end(); iter++)
 	{
-		Instruction* instr = *iter;
+		InstructionStruct* instr = *iter;
 
 		printf("-----------------------------------------------\n");
 		printInstruction(instr);

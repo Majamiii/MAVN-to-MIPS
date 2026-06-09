@@ -64,16 +64,18 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -91,6 +93,12 @@
     <ClInclude Include="LivenessAnalysis\LivenessAnalysis.h" />
     <ClInclude Include="LivenessAnalysis\Test.h" />
     <ClInclude Include="LivenessAnalysis\Variable.h" />
+    <ClInclude Include="ResourceAllocation\auto_link.h" />
+    <ClInclude Include="ResourceAllocation\InterferenceGraph.h" />
+    <ClInclude Include="ResourceAllocation\libLivnessAnalysis.h" />
+    <ClInclude Include="ResourceAllocation\libResourceAllocation.h" />
+    <ClInclude Include="ResourceAllocation\ResourceAllocation.h" />
+    <ClInclude Include="ResourceAllocation\Simplification.h" />
     <ClInclude Include="SyntaxAnalysis\SyntaxAnalysis.h" />
   </ItemGroup>
   <ItemGroup>
@@ -102,7 +110,12 @@
     <ClCompile Include="LivenessAnalysisLib\Variable.cpp" />
     <ClCompile Include="LivenessAnalysis\LivenessAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ResourceAllocation\ResourceAllocation.cpp" />
     <ClCompile Include="SyntaxAnalysis\SyntaxAnalysis.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ResourceAllocation\libLivenessAnalysis-vc140-mt.lib" />
+    <Library Include="ResourceAllocation\libResourceAllocation-vc140-mt.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

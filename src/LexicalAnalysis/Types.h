@@ -95,7 +95,7 @@ enum Regs
 /**
  * This class represents one variable from program code.
  */
-class Variable
+struct Variable
 {
 public:
 	enum VariableType
@@ -124,11 +124,11 @@ typedef std::list<Variable*> Variables;
 /**
  * This class represents one instruction in program code.
  */
-class Instruction
+struct InstructionStruct
 {
 public:
-	Instruction() : m_position(0), m_type(I_NO_TYPE) {}
-	Instruction(int pos, InstructionType type, Variables& dst, Variables& src) :
+	InstructionStruct() : m_position(0), m_type(I_NO_TYPE) {}
+	InstructionStruct(int pos, InstructionType type, Variables& dst, Variables& src) :
 		m_position(pos), m_type(type), m_dst(dst), m_src(src) {
 	}
 
@@ -142,12 +142,19 @@ public:
 	Variables m_def;
 	Variables m_in;
 	Variables m_out;
-	std::list<Instruction*> m_succ;
-	std::list<Instruction*> m_pred;
+	std::list<InstructionStruct*> m_succ;
+	std::list<InstructionStruct*> m_pred;
 };
-
 
 /**
  * This type represents list of instructions from program code.
  */
-typedef std::list<Instruction*> Instructions;
+typedef std::list<InstructionStruct*> Instructions;
+
+
+typedef struct
+{
+	Variables* variables;	///< all variables from instructions
+	char** values;			///< matrix value
+	int size;				///< size of square matrix
+} InterferenceGraph;

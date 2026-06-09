@@ -1,7 +1,7 @@
 #ifndef __SIMPLIFICATION_H__
 #define __SIMPLIFICATION_H__
 
-#include "Types.h"
+#include "../LexicalAnalysis/Types.h"
 
 #include <stack>
 

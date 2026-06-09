@@ -1,7 +1,7 @@
 #ifndef __START__H__
 #define __START__H__
 
-#include "Types.h"
+#include "../LexicalAnalysis/Types.h"
 
 
 /**

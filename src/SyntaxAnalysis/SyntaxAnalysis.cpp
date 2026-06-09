@@ -441,7 +441,7 @@ Variable* SyntaxAnalysis::findOrAddVariable(const std::string& name, Variable::V
 }
 
 void SyntaxAnalysis::buildInstruction(InstructionType type, Variables& dst, Variables& src) {
-	Instruction* instr = new Instruction(m_position++, type, dst, src);
+	InstructionStruct* instr = new InstructionStruct(m_position++, type, dst, src);
 	// def = dst, use = src
 	instr->m_def = dst;
 	instr->m_use = src;

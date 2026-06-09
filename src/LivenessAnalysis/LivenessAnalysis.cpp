@@ -18,7 +18,7 @@ void livenessAnalysis(Instructions instructions)
 
 				// 1. TO DO:
 				// out_new = U succIn;
-				for (Instruction* succ : (*rit)->m_succ) {
+				for (InstructionStruct* succ : (*rit)->m_succ) {
 					for (Variable* var : succ->m_in) {
 						bool found = false;
 						for (Variable* existing : out_new) {

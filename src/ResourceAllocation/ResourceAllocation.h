@@ -1,7 +1,7 @@
 #ifndef __RESOURCE_ALLOCATION__
 #define __RESOURCE_ALLOCATION__
 
-#include "Types.h"
+#include "../LexicalAnalysis/Types.h"
 #include "InterferenceGraph.h"
 
 #include <stack>
@@ -21,6 +21,6 @@ bool doResourceAllocation(std::stack<Variable*>* simplificationStack, Interferen
  * @param instrs list of instructions
  * @return list of instructions without unnecessary move instructions
  */
-Instructions* removeMove(Instructions* instrs);
+// Instructions* removeMove(Instructions* instrs);
  
 #endif

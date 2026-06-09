@@ -1,8 +1,7 @@
 #ifndef __INTERFERENCE_GRAPH__
 #define __INTERFERENCE_GRAPH__
 
-#include "Types.h"
-
+#include "../LexicalAnalysis/Types.h"
 
 /**
  * Use this function to make interference graph from instructions list.
