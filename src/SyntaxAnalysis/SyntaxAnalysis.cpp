@@ -91,9 +91,15 @@ void SyntaxAnalysis::S()
 	if (currentToken.getType() == T_MEM) {
 		eat(T_MEM);
 		if (!errorFound && currentToken.getType() == T_M_ID) {
+			std::string memName = currentToken.getValue();
 			eat(T_M_ID);
 			if (!errorFound && currentToken.getType() == T_NUM) {
+				int memValue = std::stoi(currentToken.getValue());
 				eat(T_NUM);
+				if (!errorFound) {
+					Variable* v = findOrAddVariable(memName, Variable::MEM_VAR);
+					v->m_value = memValue;
+				}
 			}
 		}
 	}
@@ -182,13 +188,18 @@ void SyntaxAnalysis::E()
 		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string imm = currentToken.getValue();  // save the imm value
 		eat(T_NUM);
 
 		if (!errorFound) {
 			Variables dst, src;
 			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
 			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
-			buildInstruction(I_ADDI, dst, src);
+			InstructionStruct* instr = new InstructionStruct(m_position++, I_ADDI, dst, src);
+			instr->m_def = dst;
+			instr->m_use = src;
+			instr->m_immediat = std::stoi(imm);  // store the imm value
+			m_instructions.push_back(instr);
 		}
 	}
 	else if (currentToken.getType() == T_SUB) {
@@ -248,12 +259,16 @@ void SyntaxAnalysis::E()
 		std::string rd = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
+		std::string imm = currentToken.getValue();
 		eat(T_NUM);
 
 		if (!errorFound) {
 			Variables dst, src;
 			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
-			buildInstruction(I_LI, dst, src);
+			InstructionStruct* instr = new InstructionStruct(m_position++, I_LI, dst, src);
+			instr->m_def = dst;
+			instr->m_immediat = std::stoi(imm);
+			m_instructions.push_back(instr);
 		}
 	}
 	else if (currentToken.getType() == T_SW) {
@@ -275,27 +290,34 @@ void SyntaxAnalysis::E()
 			buildInstruction(I_SW, dst, src);
 		}
 	}
-	else if (currentToken.getType() == T_B) {
-		eat(T_B);
-		eat(T_ID); // labela
-
-		if (!errorFound) {
-			Variables dst, src;
-			buildInstruction(I_B, dst, src);
-		}
-	}
 	else if (currentToken.getType() == T_BLTZ) {
 		eat(T_BLTZ);
 		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
-		eat(T_ID); // labela
+		std::string label = currentToken.getValue();  // ← sačuvaj
+		eat(T_ID);
 
 		if (!errorFound) {
 			Variables dst, src;
 			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
-			buildInstruction(I_BLTZ, dst, src);
+			InstructionStruct* instr = new InstructionStruct(m_position++, I_BLTZ, dst, src);
+			instr->m_use = src;
+			instr->m_label = label;  // ← upiši
+			m_instructions.push_back(instr);
 		}
+	}
+	else if (currentToken.getType() == T_B) {
+			eat(T_B);
+			std::string label = currentToken.getValue();  // ← sačuvaj
+			eat(T_ID);
+
+			if (!errorFound) {
+				Variables dst, src;
+				InstructionStruct* instr = new InstructionStruct(m_position++, I_B, dst, src);
+				instr->m_label = label;  // ← upiši
+				m_instructions.push_back(instr);
+			}
 	}
 	else if (currentToken.getType() == T_NOP) {
 		eat(T_NOP);
@@ -372,55 +394,6 @@ void SyntaxAnalysis::E()
 		Set register rd to 1 if register rs is 
 		less than rt, and to 0 otherwise.
 	*/
-	else if (currentToken.getType() == T_AND) {
-		eat(T_AND);
-		std::string rd = currentToken.getValue();
-		eat(T_R_ID);
-		eat(T_COMMA);
-		std::string rs = currentToken.getValue();
-		eat(T_R_ID);
-		eat(T_COMMA);
-		std::string rt = currentToken.getValue();
-		eat(T_R_ID);
-
-		if (!errorFound) {
-			Variables dst, src;
-			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
-			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
-			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
-			buildInstruction(I_AND, dst, src);
-		}
-		}
-	else if (currentToken.getType() == T_JR) {
-		eat(T_JR);
-		std::string rs = currentToken.getValue();
-		eat(T_R_ID);
-
-		if (!errorFound) {
-			Variables dst, src;
-			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
-			buildInstruction(I_JR, dst, src);
-		}
-	}
-	else if (currentToken.getType() == T_SLT) {
-		eat(T_SLT);
-		std::string rd = currentToken.getValue();
-		eat(T_R_ID);
-		eat(T_COMMA);
-		std::string rs = currentToken.getValue();
-		eat(T_R_ID);
-		eat(T_COMMA);
-		std::string rt = currentToken.getValue();
-		eat(T_R_ID);
-
-		if (!errorFound) {
-			Variables dst, src;
-			dst.push_back(findOrAddVariable(rd, Variable::REG_VAR));
-			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
-			src.push_back(findOrAddVariable(rt, Variable::REG_VAR));
-			buildInstruction(I_SLT, dst, src);
-		}
-	}
 	else {
 		printSyntaxError(currentToken);
 		errorFound = true;

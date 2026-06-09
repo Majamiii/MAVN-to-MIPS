@@ -13,6 +13,8 @@
 #include "./ResourceAllocation/Simplification.h"
 #include "./ResourceAllocation/libLivnessAnalysis.h"
 
+#include "./MIPSGeneration/MIPSGeneration.h"
+
 #include <iostream>
 #include <exception>
 
@@ -23,6 +25,25 @@ void main()
 	try
 	{
 		std::string fileName = ".\\..\\examples\\commands.mavn";
+
+
+		cout << "Input MAVN file: " << endl;
+
+		std::ifstream file(fileName);
+		if (!file.is_open()) {
+			std::cerr << "Error: Could not open the file!" << std::endl;
+		}
+		else {
+
+			string line;
+
+			while (getline(file, line)) {
+				std::cout << line << '\n';
+			}
+			file.close();
+		}
+		cout << endl << endl;
+
 		bool retVal = false;
 
 		LexicalAnalysis lex;
@@ -32,7 +53,9 @@ void main()
 		
 		lex.initialize();
 
-		retVal = lex.Do();
+		string funcName = "";
+		retVal = lex.Do(funcName);
+		cout << "Function name: " << funcName << endl;
 
 		if (retVal)
 		{
@@ -132,7 +155,55 @@ void main()
 					printVariables(*(ig->variables));
 					cout << "\nInstruction list:\n";
 					printInstructions(instructions);
-					cout << "*******************************************************************\n\n\n";
+
+
+					// -----------------------------------------------------------------------------
+
+
+					cout << endl << "---------------------------------------------" << endl;
+					cout << "Starting writing MIPS file..." << endl << endl;
+
+
+					Variables memVariables = filterMemVariables(syntax.getVariables());
+
+					cout << "Memory variables list:" << endl;
+					printVariables(memVariables);
+					cout << endl;
+
+					// funcName is already set by lexical analysis
+
+					size_t dot_pos = fileName.rfind('.');
+					fileName.erase(dot_pos);
+					fileName.append(".mips");
+
+					if (generateMIPS(memVariables, funcName, instructions, fileName)) {
+
+						cout << "Generated MIPS code: " << endl << endl;
+
+						std::ifstream file(fileName);
+						if (!file.is_open()) {
+							std::cerr << "Error: Could not open the file!" << std::endl;
+						}
+						else {
+
+							string line;
+
+							while (getline(file, line)) {
+								std::cout << line << '\n';
+							}
+							file.close();
+						}
+						cout << endl << endl;
+						cout << "MIPS code generation finished successfully!" << endl << endl;
+					}
+					else
+					{
+						cout << "MIPS code generation failed!" << endl;
+					}
+
+
+					// -----------------------------------------------------------------------------
+
 				}
 				else
 				{
@@ -152,12 +223,6 @@ void main()
 			freeInterferenceGraph(ig);
 		}
 
-
-		cout << endl << endl;
-
-
-
-		// -----------------------------------------------------------------------------
 
 
 	}

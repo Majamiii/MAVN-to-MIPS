@@ -57,7 +57,7 @@ public:
 	/**
 	 * Method which performs lexical analysis
 	 */
-	bool Do();
+	bool Do(string& funcName);
 
 	/**
 	 * Method for reading the input file

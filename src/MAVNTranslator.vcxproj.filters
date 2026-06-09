@@ -72,6 +72,9 @@
     <ClInclude Include="ResourceAllocation\Simplification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MIPSGeneration\MIPSGeneration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -102,6 +105,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceAllocation\ResourceAllocation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MIPSGeneration\MIPSGeneration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

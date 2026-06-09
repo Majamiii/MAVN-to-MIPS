@@ -16,7 +16,7 @@ void LexicalAnalysis::initialize()
 }
 
 
-bool LexicalAnalysis::Do()
+bool LexicalAnalysis::Do(string& funcName)
 {
 	while(1)
 	{
@@ -53,6 +53,7 @@ bool LexicalAnalysis::Do()
 
 				// ime je validno, dodaj i njega
 				tokenList.push_back(nextToken);
+				funcName = nextToken.getValue();
 				break;
 			}
 			case T_MEM:

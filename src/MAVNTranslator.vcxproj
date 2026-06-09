@@ -92,6 +92,7 @@
     <ClInclude Include="LivenessAnalysis\auto_link.h" />
     <ClInclude Include="LivenessAnalysis\Instruction.h" />
     <ClInclude Include="LivenessAnalysis\LivenessAnalysis.h" />
+    <ClInclude Include="MIPSGeneration\MIPSGeneration.h" />
     <ClInclude Include="ResourceAllocation\auto_link.h" />
     <ClInclude Include="ResourceAllocation\InterferenceGraph.h" />
     <ClInclude Include="ResourceAllocation\libLivnessAnalysis.h" />
@@ -109,6 +110,7 @@
     <ClCompile Include="LivenessAnalysisLib\Variable.cpp" />
     <ClCompile Include="LivenessAnalysis\LivenessAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MIPSGeneration\MIPSGeneration.cpp" />
     <ClCompile Include="ResourceAllocation\ResourceAllocation.cpp" />
     <ClCompile Include="SyntaxAnalysis\SyntaxAnalysis.cpp" />
   </ItemGroup>

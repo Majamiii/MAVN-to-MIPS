@@ -105,14 +105,15 @@ public:
 		NO_TYPE
 	};
 
-	Variable() : m_type(NO_TYPE), m_name(""), m_position(-1), m_assignment(no_assign) {}
-	Variable(std::string name, int pos) : m_type(NO_TYPE), m_name(name), m_position(pos), m_assignment(no_assign) {}
+	Variable(int value=0) : m_type(NO_TYPE), m_name(""), m_position(-1), m_assignment(no_assign), m_value(value) {}
+	Variable(std::string name, int pos, int value=0) : m_type(NO_TYPE), m_name(name), m_position(pos), m_assignment(no_assign), m_value(value) {}
 
 // private:
 	VariableType m_type;
 	std::string m_name;
 	int m_position;
 	Regs m_assignment;
+	int m_value;
 };
 
 
@@ -122,14 +123,13 @@ public:
 typedef std::list<Variable*> Variables;
 
 /**
- * This class represents one instruction in program code.
+ * This struct represents one instruction in program code.
  */
-struct InstructionStruct
-{
+struct InstructionStruct {
 public:
-	InstructionStruct() : m_position(0), m_type(I_NO_TYPE) {}
+	InstructionStruct() : m_position(0), m_type(I_NO_TYPE), m_immediat(0), m_label("") {}
 	InstructionStruct(int pos, InstructionType type, Variables& dst, Variables& src) :
-		m_position(pos), m_type(type), m_dst(dst), m_src(src) {
+		m_position(pos), m_type(type), m_dst(dst), m_src(src), m_immediat(0), m_label("") {
 	}
 
 	int m_position;
@@ -137,13 +137,15 @@ public:
 
 	Variables m_dst;
 	Variables m_src;
-
 	Variables m_use;
 	Variables m_def;
 	Variables m_in;
 	Variables m_out;
 	std::list<InstructionStruct*> m_succ;
 	std::list<InstructionStruct*> m_pred;
+
+	int m_immediat;
+	std::string m_label;
 };
 
 /**
