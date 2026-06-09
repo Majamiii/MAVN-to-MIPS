@@ -45,12 +45,6 @@
     <ClInclude Include="LivenessAnalysis\LivenessAnalysis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LivenessAnalysis\Test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LivenessAnalysis\Variable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LivenessAnalysisLib\Instruction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -110,9 +104,5 @@
     <ClCompile Include="ResourceAllocation\ResourceAllocation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="ResourceAllocation\libLivenessAnalysis-vc140-mt.lib" />
-    <Library Include="ResourceAllocation\libResourceAllocation-vc140-mt.lib" />
   </ItemGroup>
 </Project>

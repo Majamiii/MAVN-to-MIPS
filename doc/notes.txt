@@ -103,3 +103,24 @@ Bez ovoga SUCC/PRED bi bili prazni i liveness analiza ne bi mogla da propagira I
 getInstructions / getVariables — getteri koji vraćaju reference na liste, da ih main.cpp može koristiti umesto makeExample():
 cppInstructions& getInstructions() { return m_instructions; }
 Variables& getVariables()       { return m_variables; }
+
+
+
+------ ALOKACIJA RESURSA ---------
+
+RESOURCE ALLOCATION SETUP
+
+Rešenje
+Napisali smo sve tri funkcije sami:
+doInterferenceGraph — prolazi kroz m_out svake instrukcije (varijable koje su istovremeno žive) i označava ih kao međusobno u smetnji u matrici:
+ako su v1 i v2 istovremeno u m_out → values[v1.pos][v2.pos] = INTERFERENCE
+doSimplification — algoritam bojenja grafa:
+
+Traži varijablu čiji je stepen (broj smetnji) manji od broja registara
+Stavlja je na stack i "uklanja" iz grafa
+Ponavlja dok ne ukloni sve → ako zapne = spill
+
+doResourceAllocation — već si imala napisan, samo je trebalo da radi sa tvojim tipovima:
+
+Skida varijable sa stacka jednu po jednu
+Dodjeljuje boju (registar) koja nije već korištena kod suseda u smetnji

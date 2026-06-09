@@ -3,6 +3,6 @@
 
 #include "../LexicalAnalysis/Types.h"
 
-void livenessAnalysis(Instructions instructions);
+void livenessAnalysis(Instructions& instructions);
 
 #endif

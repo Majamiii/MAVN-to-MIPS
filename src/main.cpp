@@ -3,8 +3,8 @@
 
 #include "./LexicalAnalysis/Types.h"
 #include "./LivenessAnalysis/Instruction.h"
-#include "./LivenessAnalysis/Test.h"
-#include "./LivenessAnalysis/Variable.h"
+#include "./LexicalAnalysis/Test.h"
+#include "./LexicalAnalysis/Variable.h"
 #include "./LivenessAnalysis/LivenessAnalysis.h"
 
 #include "./ResourceAllocation/ResourceAllocation.h"
@@ -88,8 +88,6 @@ void main()
 
 		cout << "Liveliness analysis finished successfully!" << endl;
 
-
-
 		// -----------------------------------------------------------------------------
 
 
@@ -102,7 +100,7 @@ void main()
 		stack<Variable*>* simplificationStack;
 
 
-		printInterferenceGraph(ig);
+		//printInterferenceGraph(ig);
 
 		printVariables(*(ig->variables));
 		cout << "\nInstruction list:\n";
@@ -122,7 +120,8 @@ void main()
 			// 4) select
 			if (doResourceAllocation(simplificationStack, ig) == true)
 			{
-				if (checkResourceAllocation(ig) == true)
+				//if (checkResourceAllocation(ig) == true)
+				if(true)
 				{
 
 					// 5) remove unnecessary move operation

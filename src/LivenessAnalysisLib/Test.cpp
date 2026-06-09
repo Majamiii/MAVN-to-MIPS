@@ -38,7 +38,7 @@ static InstructionStruct* makeInstruction(unsigned int pPos, InstructionType tTy
 }
 
 
-void makeExample()
+void makeEx()
 {
 	Variable *a, *b, *c;
 	a = new Variable("a", 0);

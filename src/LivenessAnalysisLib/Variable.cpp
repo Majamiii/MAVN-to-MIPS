@@ -7,7 +7,7 @@ void printVariable(Variable* variable)
 }
 
 
-void printVariableName(Variable* variable)
+void printVarName(Variable* variable)
 {
 	printf("%s", variable->m_name.c_str());
 }
@@ -32,7 +32,7 @@ void printVariablesNames(Variables variables)
 
 	for (iter = variables.begin(); iter != variables.end(); iter++)
 	{
-		printVariableName(*iter);
+		printVarName(*iter);
 		printf(" ");
 	}
 	printf("\n");

@@ -69,6 +69,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,8 +92,6 @@
     <ClInclude Include="LivenessAnalysis\auto_link.h" />
     <ClInclude Include="LivenessAnalysis\Instruction.h" />
     <ClInclude Include="LivenessAnalysis\LivenessAnalysis.h" />
-    <ClInclude Include="LivenessAnalysis\Test.h" />
-    <ClInclude Include="LivenessAnalysis\Variable.h" />
     <ClInclude Include="ResourceAllocation\auto_link.h" />
     <ClInclude Include="ResourceAllocation\InterferenceGraph.h" />
     <ClInclude Include="ResourceAllocation\libLivnessAnalysis.h" />
@@ -112,10 +111,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ResourceAllocation\ResourceAllocation.cpp" />
     <ClCompile Include="SyntaxAnalysis\SyntaxAnalysis.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="ResourceAllocation\libLivenessAnalysis-vc140-mt.lib" />
-    <Library Include="ResourceAllocation\libResourceAllocation-vc140-mt.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

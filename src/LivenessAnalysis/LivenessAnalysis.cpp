@@ -1,9 +1,9 @@
 ﻿#include "LivenessAnalysis.h"
 #include "Instruction.h"
-#include "Variable.h"
+#include "../LivenessAnalysisLib/Variable.h"
 #include "../LexicalAnalysis/Types.h"
 
-void livenessAnalysis(Instructions instructions)
+void livenessAnalysis(Instructions& instructions)
 {
 	bool changed;
 	do {
