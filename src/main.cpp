@@ -24,21 +24,21 @@ void main()
 {
 	try
 	{
-		std::string fileName = ".\\..\\examples\\multiply.mavn";
+		string fileName = ".\\..\\examples\\simple.mavn";
 
 
 		cout << "Input MAVN file: " << endl;
 
-		std::ifstream file(fileName);
+		ifstream file(fileName);
 		if (!file.is_open()) {
-			std::cerr << "Error: Could not open the file!" << std::endl;
+			throw runtime_error("\nException! Failed to open input file!\n");
 		}
 		else {
 
 			string line;
 
 			while (getline(file, line)) {
-				std::cout << line << '\n';
+				cout << line << '\n';
 			}
 			file.close();
 		}
@@ -83,7 +83,7 @@ void main()
 		}
 		else
 		{
-			cout << endl << "Syntax analysis failed!" << endl;
+			throw runtime_error("\nException! Syntax analysis failed!\n");
 		}
 
 
@@ -136,7 +136,11 @@ void main()
 		// 3) spill
 		if (simplificationStack == NULL)
 		{
-			cout << "Spill detected!\n";
+			if (ig != NULL && ig->values != NULL)
+			{
+				freeInterferenceGraph(ig);
+			}
+			throw runtime_error("\nException! Spill detected!\n");
 		}
 		else
 		{
@@ -180,16 +184,16 @@ void main()
 
 						cout << "Generated MIPS code: " << endl << endl;
 
-						std::ifstream file(fileName);
+						ifstream file(fileName);
 						if (!file.is_open()) {
-							std::cerr << "Error: Could not open the file!" << std::endl;
+							cerr << "Error: Could not open the file!" << endl;
 						}
 						else {
 
 							string line;
 
 							while (getline(file, line)) {
-								std::cout << line << '\n';
+								cout << line << '\n';
 							}
 							file.close();
 						}
@@ -198,7 +202,11 @@ void main()
 					}
 					else
 					{
-						cout << "MIPS code generation failed!" << endl;
+						if (ig != NULL && ig->values != NULL)
+						{
+							freeInterferenceGraph(ig);
+						}
+						throw runtime_error("\nException! MIPS code generation failed!\n");
 					}
 
 
@@ -207,23 +215,22 @@ void main()
 				}
 				else
 				{
-					cout << "Allocation failed!\n";
+					if (ig != NULL && ig->values != NULL)
+					{
+						freeInterferenceGraph(ig);
+					}
+					throw runtime_error("\nException! Allocation failed!\n");
 				}
 			}
 			else
 			{
-				cout << "Actual spill!\n";
+				if (ig != NULL && ig->values != NULL)
+				{
+					freeInterferenceGraph(ig);
+				}
+				throw runtime_error("\nException! Actual spill\n");
 			}
 		}
-
-
-		// free resources
-		if (ig != NULL && ig->values != NULL)
-		{
-			freeInterferenceGraph(ig);
-		}
-
-
 
 	}
 	catch (runtime_error e)

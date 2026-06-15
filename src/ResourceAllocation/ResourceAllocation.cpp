@@ -16,7 +16,7 @@ int getColor(Variable* notColoredVariable, InterferenceGraph* ig) {
     //Napomena: smetnja je u InterferenceGraph-u oznacena kao __INTERFERENCE__
 
     int pos = notColoredVariable->m_position;
-    bool usedColors[6] = { 0,0,0,0,0,0 };
+    bool usedColors[6] = { 0,0,0,0,0 };
 
     for (int i = 0; i < ig->size; i++) {
         if (ig->values[pos][i] == __INTERFERENCE__) {
@@ -33,7 +33,7 @@ int getColor(Variable* notColoredVariable, InterferenceGraph* ig) {
     //Napomena: ukoliko ne postoji boja koju mozemo dodeliti promenljivoj vratiti 
 
 
-    for (int color = t0; color <= t4; color++) {
+    for (int color = t0; color <= t3; color++) {
         if (usedColors[color] == 0) {
             return color;
         }
@@ -77,31 +77,7 @@ bool doResourceAllocation(stack<Variable*>* simplificationStack, InterferenceGra
     return true;
 }
 
-/*
-Реализовати брисање Т_MOVE инструкција у оквиру функције removeMove у датотеци
-ResourceAllocation.cpp. Ова функција, након завршетка доделе ресурса, елиминише све инструкције које
-представљају доделу регистра самом себи.
-Instructions * removeMove(Instructions * instrs);
-*/
-/*
-Instructions* removeMove(Instructions* instrs) {
-    Instructions* noMoveInstruction = new Instructions();
 
-    for (auto instr : *instrs) {
-        if (instr->m_type == T_MOVE) {
-            if (instr->dst->assigment == instr->src1->assigment) {
-                continue;
-            }
-
-        }
-        else {
-            noMoveInstruction->push_back(instr);
-        }
-    }
-
-    return noMoveInstruction;
-}
-*/
 InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
     InterferenceGraph* ig = new InterferenceGraph();
     ig->variables = new Variables();
@@ -110,16 +86,52 @@ InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
     int maxPos = 0;
 
     // Collection loop
+    // Collect all register variables from DEF
+    for (auto instr : *instructions) {
+        for (Variable* var : instr->m_def) {
+
+            if (var->m_type != Variable::REG_VAR)
+                continue;
+
+            bool found = false;
+
+            for (Variable* v : *(ig->variables)) {
+                if (v->m_position == var->m_position) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                ig->variables->push_back(var);
+
+                if (var->m_position > maxPos)
+                    maxPos = var->m_position;
+            }
+        }
+    }
+
+    // Collect all register variables from OUT
     for (auto instr : *instructions) {
         for (Variable* var : instr->m_out) {
-            if (var->m_type == Variable::REG_VAR) {  // ← correct enum
-                bool found = false;
-                for (Variable* v : *(ig->variables))
-                    if (v->m_position == var->m_position) { found = true; break; }
-                if (!found) {
-                    ig->variables->push_back(var);
-                    if (var->m_position > maxPos) maxPos = var->m_position;
+
+            if (var->m_type != Variable::REG_VAR)
+                continue;
+
+            bool found = false;
+
+            for (Variable* v : *(ig->variables)) {
+                if (v->m_position == var->m_position) {
+                    found = true;
+                    break;
                 }
+            }
+
+            if (!found) {
+                ig->variables->push_back(var);
+
+                if (var->m_position > maxPos)
+                    maxPos = var->m_position;
             }
         }
     }
@@ -206,11 +218,6 @@ stack<Variable*>* doSimplification(InterferenceGraph* ig, int degree) {
                     }
                 }
 
-                printf("degree param = %d\n", degree);
-                printf("ig->variables->size() = %d\n", (int)ig->variables->size());
-                for (int i = 0; i < ig->size; i++) {
-                    printf("degrees[%d] = %d\n", i, degrees[i]);
-                }
 
                 break; // Kreni ponovo od pocetka
             }

@@ -36,7 +36,7 @@
 /**
  * Number of regs in processor.
  */
-#define __REG_NUMBER__					5
+#define __REG_NUMBER__					4
 
 
 /**

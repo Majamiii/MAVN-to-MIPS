@@ -156,7 +156,6 @@ string regToString(Regs r) {
     case t1: return "$t1";
     case t2: return "$t2";
     case t3: return "$t3";
-    case t4: return "$t4";
     default: return "$??";
     }
 }
