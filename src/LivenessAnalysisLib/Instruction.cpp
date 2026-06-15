@@ -16,6 +16,7 @@ static void printInstructionsPos(Instructions instrs)
 
 static void printInstruction(InstructionStruct* instr)
 {
+	printf("====== INSTRUCTION ======\n\n");
 	printf("%d\n\n", instr->m_position);
 
 	printf("Type: %d\n\n", instr->m_type);

@@ -16,7 +16,7 @@ int getColor(Variable* notColoredVariable, InterferenceGraph* ig) {
     //Napomena: smetnja je u InterferenceGraph-u oznacena kao __INTERFERENCE__
 
     int pos = notColoredVariable->m_position;
-    bool usedColors[4] = { 0,0,0,0 };
+    bool usedColors[6] = { 0,0,0,0,0,0 };
 
     for (int i = 0; i < ig->size; i++) {
         if (ig->values[pos][i] == __INTERFERENCE__) {
@@ -33,7 +33,7 @@ int getColor(Variable* notColoredVariable, InterferenceGraph* ig) {
     //Napomena: ukoliko ne postoji boja koju mozemo dodeliti promenljivoj vratiti 
 
 
-    for (int color = t0; color <= t3; color++) {
+    for (int color = t0; color <= t4; color++) {
         if (usedColors[color] == 0) {
             return color;
         }
@@ -44,33 +44,30 @@ int getColor(Variable* notColoredVariable, InterferenceGraph* ig) {
 
 bool doResourceAllocation(stack<Variable*>* simplificationStack, InterferenceGraph* ig) {
 
+    save.clear();
+
     Variable* currentVariable, * previusVariable;
 
     previusVariable = NULL;
 
     int counter = 0;
 
-    while (simplificationStack->size() > 0) {
+    for (auto it = ig->variables->begin(); it != ig->variables->end(); ++it) {
+        (*it)->m_assignment = (Regs)__UNDEFINE__;
+    }
 
+    while (simplificationStack->size() > 0) {
         currentVariable = simplificationStack->top();
         simplificationStack->pop();
-
         save.push_back(currentVariable);
 
-        if (previusVariable == NULL) {
-            // bojenje prvog cvora u stack-u
-            currentVariable->m_assignment = t0;
+        int color = getColor(currentVariable, ig);
+        if (color == __UNDEFINE__) {
+            printf("COLORING FAILED for: %s pos=%d\n", currentVariable->m_name.c_str(), currentVariable->m_position);
+            return false;
         }
-        else {
-            // dodeliti boju ako nije prvi cvor u stack-u
-            int color = getColor(currentVariable, ig);
-            if (color == __UNDEFINE__) {
-                return false;
-            }
-            else {
-                currentVariable->m_assignment = (Regs)color;
-            }
-        }
+        printf("Colored %s -> %d\n", currentVariable->m_name.c_str(), color);
+        currentVariable->m_assignment = (Regs)color;
 
         previusVariable = currentVariable;
     }
@@ -108,20 +105,25 @@ Instructions* removeMove(Instructions* instrs) {
 InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
     InterferenceGraph* ig = new InterferenceGraph();
     ig->variables = new Variables();
-
-    // Prikupi varijable i nadji maksimalnu poziciju
+    // collect from both def AND out sets,
+    // but only actual registers
     int maxPos = 0;
+
+    // Collection loop
     for (auto instr : *instructions) {
-        for (Variable* var : instr->m_def) {
-            bool found = false;
-            for (Variable* v : *(ig->variables))
-                if (v->m_position == var->m_position) { found = true; break; }
-            if (!found) {
-                ig->variables->push_back(var);
-                if (var->m_position > maxPos) maxPos = var->m_position;
+        for (Variable* var : instr->m_out) {
+            if (var->m_type == Variable::REG_VAR) {  // ← correct enum
+                bool found = false;
+                for (Variable* v : *(ig->variables))
+                    if (v->m_position == var->m_position) { found = true; break; }
+                if (!found) {
+                    ig->variables->push_back(var);
+                    if (var->m_position > maxPos) maxPos = var->m_position;
+                }
             }
         }
     }
+
 
     // Alociraj matricu po maxPos+1, ne po broju varijabli
     ig->size = maxPos + 1;
@@ -133,7 +135,9 @@ InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
     // Popuni interferenciju iz m_out
     for (auto instr : *instructions) {
         for (Variable* v1 : instr->m_out) {
+            if (v1->m_type != Variable::REG_VAR) continue;
             for (Variable* v2 : instr->m_out) {
+                if (v2->m_type != Variable::REG_VAR) continue;
                 if (v1->m_position != v2->m_position) {
                     ig->values[v1->m_position][v2->m_position] = __INTERFERENCE__;
                     ig->values[v2->m_position][v1->m_position] = __INTERFERENCE__;
@@ -141,6 +145,21 @@ InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
             }
         }
     }
+
+    // takodje iz m_in
+    for (auto instr : *instructions) {
+        for (Variable* v1 : instr->m_in) {
+            if (v1->m_type != Variable::REG_VAR) continue;
+            for (Variable* v2 : instr->m_in) {
+                if (v2->m_type != Variable::REG_VAR) continue;
+                if (v1->m_position != v2->m_position) {
+                    ig->values[v1->m_position][v2->m_position] = __INTERFERENCE__;
+                    ig->values[v2->m_position][v1->m_position] = __INTERFERENCE__;
+                }
+            }
+        }
+    }
+
 
     return ig;
 }
@@ -185,6 +204,12 @@ stack<Variable*>* doSimplification(InterferenceGraph* ig, int degree) {
                     if (ig->values[pos][j] == __INTERFERENCE__ && !removed[j]) {
                         degrees[j]--;
                     }
+                }
+
+                printf("degree param = %d\n", degree);
+                printf("ig->variables->size() = %d\n", (int)ig->variables->size());
+                for (int i = 0; i < ig->size; i++) {
+                    printf("degrees[%d] = %d\n", i, degrees[i]);
                 }
 
                 break; // Kreni ponovo od pocetka

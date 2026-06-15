@@ -24,7 +24,7 @@ void main()
 {
 	try
 	{
-		std::string fileName = ".\\..\\examples\\commands.mavn";
+		std::string fileName = ".\\..\\examples\\multiply.mavn";
 
 
 		cout << "Input MAVN file: " << endl;

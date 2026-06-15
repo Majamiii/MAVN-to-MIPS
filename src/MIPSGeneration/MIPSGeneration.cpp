@@ -63,6 +63,13 @@ bool generateMIPS(Variables& memVariables, string funcName, Instructions& instru
 		outFile << "\n.text\n";
         outFile << funcName << ":\n";
         for (InstructionStruct* instr : instructions) {
+
+            if (!instr->m_label.empty() &&
+                instr->m_type != I_BLTZ &&
+                instr->m_type != I_B) {
+                outFile << instr->m_label << ":\n";
+            }
+
             string dst, src1, src2;
             if (instr->m_dst.empty()) {
 				dst = "";
@@ -109,7 +116,7 @@ bool generateMIPS(Variables& memVariables, string funcName, Instructions& instru
                 outFile << "\tlw\t" << dst << ", 0(" << src1 << ")\n";
                 break;
             case I_SW:
-                outFile << "\tsw\t" << src1 << ", 0(" << dst << ")\n";
+                outFile << "\tsw\t" << src1 << ", 0(" << src2 << ")\n";
                 break;
             case I_LI:
                 outFile << "\tli\t" << dst << ", " << instr->m_immediat << "\n";
@@ -149,6 +156,7 @@ string regToString(Regs r) {
     case t1: return "$t1";
     case t2: return "$t2";
     case t3: return "$t3";
+    case t4: return "$t4";
     default: return "$??";
     }
 }

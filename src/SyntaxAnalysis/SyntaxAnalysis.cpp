@@ -116,10 +116,15 @@ void SyntaxAnalysis::S()
 		}
 	}
 	else if (currentToken.getType() == T_ID) {
+		std::string labelName = currentToken.getValue();
 		eat(T_ID);
 		if (!errorFound && currentToken.getType() == T_COL) {
 			eat(T_COL);
 			E();
+			// tag the last added instruction with this label
+			if (!m_instructions.empty()) {
+				m_instructions.back()->m_label = labelName;
+			}
 		}
 	}
 	else {
@@ -422,13 +427,48 @@ void SyntaxAnalysis::buildInstruction(InstructionType type, Variables& dst, Vari
 }
 
 void SyntaxAnalysis::buildControlFlow() {
+	// Build label -> instruction map
+	std::map<std::string, InstructionStruct*> labelMap;
+	for (auto instr : m_instructions) {
+		if (!instr->m_label.empty() &&
+			instr->m_type != I_BLTZ && instr->m_type != I_B) {
+			labelMap[instr->m_label] = instr;
+		}
+	}
+
 	auto it = m_instructions.begin();
 	while (it != m_instructions.end()) {
 		auto next = std::next(it);
-		if (next != m_instructions.end()) {
-			(*it)->m_succ.push_back(*next);
-			(*next)->m_pred.push_back(*it);
+		InstructionStruct* cur = *it;
+
+		if (cur->m_type == I_B) {
+			// unconditional jump - only successor is the target
+			if (labelMap.count(cur->m_label)) {
+				InstructionStruct* target = labelMap[cur->m_label];
+				cur->m_succ.push_back(target);
+				target->m_pred.push_back(cur);
+			}
 		}
+		else if (cur->m_type == I_BLTZ) {
+			// conditional branch - fall-through AND target
+			if (next != m_instructions.end()) {
+				cur->m_succ.push_back(*next);
+				(*next)->m_pred.push_back(cur);
+			}
+			if (labelMap.count(cur->m_label)) {
+				InstructionStruct* target = labelMap[cur->m_label];
+				cur->m_succ.push_back(target);
+				target->m_pred.push_back(cur);
+			}
+		}
+		else {
+			// normal sequential flow
+			if (next != m_instructions.end()) {
+				cur->m_succ.push_back(*next);
+				(*next)->m_pred.push_back(cur);
+			}
+		}
+
 		it = next;
 	}
 }
