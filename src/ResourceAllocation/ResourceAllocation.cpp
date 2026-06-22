@@ -16,7 +16,7 @@ int getColor(Variable* notColoredVariable, InterferenceGraph* ig) {
     //Napomena: smetnja je u InterferenceGraph-u oznacena kao __INTERFERENCE__
 
     int pos = notColoredVariable->m_position;
-    bool usedColors[6] = { 0,0,0,0,0 };
+    bool usedColors[5] = { 0,0,0,0,0 };
 
     for (int i = 0; i < ig->size; i++) {
         if (ig->values[pos][i] == __INTERFERENCE__) {
