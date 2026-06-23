@@ -4,6 +4,7 @@
 #include "Instruction.h"
 #include "Simplification.h"
 #include <stack>
+#include <unordered_set>
 
 using namespace std;
 
@@ -81,75 +82,61 @@ bool doResourceAllocation(stack<Variable*>* simplificationStack, InterferenceGra
 InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
     InterferenceGraph* ig = new InterferenceGraph();
     ig->variables = new Variables();
-    // collect from both def AND out sets,
-    // but only actual registers
+
     int maxPos = 0;
+    std::unordered_set<int> visitedPositions;
 
-    // Collection loop
-    // Collect all register variables from DEF
     for (auto instr : *instructions) {
-        for (Variable* var : instr->m_def) {
+        
+        std::vector<std::list<Variable*>*> allLists = {
+            &instr->m_use, &instr->m_def, &instr->m_in, &instr->m_out
+        };
 
-            if (var->m_type != Variable::REG_VAR)
-                continue;
+        for (auto listPtr : allLists) {
+            for (Variable* var : *listPtr) {
+                if (var->m_type != Variable::REG_VAR) continue;
 
-            bool found = false;
+                if (visitedPositions.find(var->m_position) == visitedPositions.end()) {
+                    visitedPositions.insert(var->m_position);
+                    ig->variables->push_back(var);
 
-            for (Variable* v : *(ig->variables)) {
-                if (v->m_position == var->m_position) {
-                    found = true;
-                    break;
+                    if (var->m_position > maxPos) {
+                        maxPos = var->m_position;
+                    }
                 }
-            }
-
-            if (!found) {
-                ig->variables->push_back(var);
-
-                if (var->m_position > maxPos)
-                    maxPos = var->m_position;
             }
         }
     }
 
-    // Collect all register variables from OUT
-    for (auto instr : *instructions) {
-        for (Variable* var : instr->m_out) {
-
-            if (var->m_type != Variable::REG_VAR)
-                continue;
-
-            bool found = false;
-
-            for (Variable* v : *(ig->variables)) {
-                if (v->m_position == var->m_position) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                ig->variables->push_back(var);
-
-                if (var->m_position > maxPos)
-                    maxPos = var->m_position;
-            }
-        }
-    }
-
-
-    // Alociraj matricu po maxPos+1, ne po broju varijabli
     ig->size = maxPos + 1;
     ig->values = new char* [ig->size];
     for (int i = 0; i < ig->size; i++) {
         ig->values[i] = new char[ig->size]();
     }
 
-    // Popuni interferenciju iz m_out
     for (auto instr : *instructions) {
-        for (Variable* v1 : instr->m_out) {
+        // def je u interferenciji sa out
+        for (Variable* d : instr->m_def) {
+            if (d->m_type != Variable::REG_VAR) continue;
+
+            for (Variable* o : instr->m_out) {
+                if (o->m_type != Variable::REG_VAR) continue;
+
+                if (d->m_position != o->m_position) {
+                    ig->values[d->m_position][o->m_position] = __INTERFERENCE__;
+                    ig->values[o->m_position][d->m_position] = __INTERFERENCE__;
+                }
+            }
+        }
+
+        // m_out međusobna interferencija
+        for (auto it1 = instr->m_out.begin(); it1 != instr->m_out.end(); ++it1) {
+            Variable* v1 = *it1;
             if (v1->m_type != Variable::REG_VAR) continue;
-            for (Variable* v2 : instr->m_out) {
+            for (auto it2 = std::next(it1); it2 != instr->m_out.end(); ++it2) {
+                Variable* v2 = *it2;
                 if (v2->m_type != Variable::REG_VAR) continue;
+
                 if (v1->m_position != v2->m_position) {
                     ig->values[v1->m_position][v2->m_position] = __INTERFERENCE__;
                     ig->values[v2->m_position][v1->m_position] = __INTERFERENCE__;
@@ -157,34 +144,20 @@ InterferenceGraph* doInterferenceGraph(Instructions* instructions) {
             }
         }
     }
-
-    // takodje iz m_in
-    for (auto instr : *instructions) {
-        for (Variable* v1 : instr->m_in) {
-            if (v1->m_type != Variable::REG_VAR) continue;
-            for (Variable* v2 : instr->m_in) {
-                if (v2->m_type != Variable::REG_VAR) continue;
-                if (v1->m_position != v2->m_position) {
-                    ig->values[v1->m_position][v2->m_position] = __INTERFERENCE__;
-                    ig->values[v2->m_position][v1->m_position] = __INTERFERENCE__;
-                }
-            }
-        }
-    }
-
 
     return ig;
 }
+
 
 stack<Variable*>* doSimplification(InterferenceGraph* ig, int degree) {
 
     stack<Variable*>* simplificationStack = new stack<Variable*>();
 
-    // Kopija stepena svake varijable (broj smetnji)
+    // kopija stepena svake varijable (broj smetnji)
     vector<int> degrees(ig->size, 0);
     vector<bool> removed(ig->size, false);
 
-    // Izracunaj pocetni stepen za svaku varijablu
+    // izracunaj pocetni stepen za svaku varijablu
     for (int i = 0; i < ig->size; i++) {
         for (int j = 0; j < ig->size; j++) {
             if (ig->values[i][j] == __INTERFERENCE__) {
@@ -197,7 +170,7 @@ stack<Variable*>* doSimplification(InterferenceGraph* ig, int degree) {
 
     while (removedCount < (int)ig->variables->size()){
 
-        // Nadji varijablu sa stepenom manjim od degree koja nije uklonjena
+		// da li je pronadjena varijabla sa stepenom manjem od degree
         bool found = false;
 
         for (auto it = ig->variables->begin(); it != ig->variables->end(); ++it) {
@@ -205,25 +178,24 @@ stack<Variable*>* doSimplification(InterferenceGraph* ig, int degree) {
             int pos = var->m_position;
 
             if (!removed[pos] && degrees[pos] < degree) {
-                // Stavi na stack
+                // stavi na stack
                 simplificationStack->push(var);
                 removed[pos] = true;
                 removedCount++;
                 found = true;
 
-                // Umanji stepen susedima
+                // umanji stepen susedima
                 for (int j = 0; j < ig->size; j++) {
                     if (ig->values[pos][j] == __INTERFERENCE__ && !removed[j]) {
                         degrees[j]--;
                     }
                 }
 
-
-                break; // Kreni ponovo od pocetka
+                break;
             }
         }
 
-        // Ako nije nadjena ni jedna - spill
+        // ako nije nadjena ni jedna - spill
         if (!found) {
             return NULL;
         }
@@ -243,7 +215,7 @@ void freeInterferenceGraph(InterferenceGraph* ig) {
         ig->values = NULL;
     }
 
-    // NE deletuj ig->variables - nije uvek heap alociran
+    // nemoj da brises ig->variables, koriste se posle
     ig->variables = NULL;
 
     delete ig;

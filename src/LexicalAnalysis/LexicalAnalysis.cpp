@@ -36,7 +36,6 @@ bool LexicalAnalysis::Do(string& funcName)
 			{
 				tokenList.push_back(token);
 
-				// rucno se preskacu razmaci
 				Token nextToken = getNextTokenLex();
 				while (nextToken.getType() == T_WHITE_SPACE)
 					nextToken = getNextTokenLex();
@@ -51,7 +50,6 @@ bool LexicalAnalysis::Do(string& funcName)
 					return false;
 				}
 
-				// ime je validno, dodaj i njega
 				tokenList.push_back(nextToken);
 				funcName = nextToken.getValue();
 				break;

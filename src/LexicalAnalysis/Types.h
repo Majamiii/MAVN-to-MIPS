@@ -93,7 +93,7 @@ enum Regs
 
 
 /**
- * This class represents one variable from program code.
+ * This struct represents one variable from program code.
  */
 struct Variable
 {
@@ -108,7 +108,6 @@ public:
 	Variable(int value=0) : m_type(NO_TYPE), m_name(""), m_position(-1), m_assignment(no_assign), m_value(value) {}
 	Variable(std::string name, int pos, int value=0) : m_type(NO_TYPE), m_name(name), m_position(pos), m_assignment(no_assign), m_value(value) {}
 
-// private:
 	VariableType m_type;
 	std::string m_name;
 	int m_position;
@@ -156,7 +155,7 @@ typedef std::list<InstructionStruct*> Instructions;
 
 typedef struct
 {
-	Variables* variables;	///< all variables from instructions
-	char** values;			///< matrix value
-	int size;				///< size of square matrix
+	Variables* variables;	// all variables
+	char** values;			// matrix for interference graph
+	int size;				// size of square matrix
 } InterferenceGraph;

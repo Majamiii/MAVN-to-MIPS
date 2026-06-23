@@ -21,6 +21,8 @@ bool SyntaxAnalysis::Do()
 	//TO DO: Call function for the starting non-terminal symbol
 
 	Q();
+
+	// pozivanje funkcije koja radi kontrolu toka programa
 	buildControlFlow();
 	return !errorFound;
 }
@@ -122,7 +124,7 @@ void SyntaxAnalysis::S()
 		if (!errorFound && currentToken.getType() == T_COL) {
 			eat(T_COL);
 			E();
-			// tag the last added instruction with this label
+			// dodaj lalbel poslednjoj dodatoj instrukciji
 			if (!m_instructions.empty()) {
 				m_instructions.back()->m_label = labelName;
 			}
@@ -164,6 +166,9 @@ void SyntaxAnalysis::E()
 	   E → b id 
 	   E → bltz rid, id 
 	   E → nop
+	   E → and rid, rid, rid
+	   E → slt rid, rid, rid
+	   E → jr rid
 	*/
 	else if (currentToken.getType() == T_ADD) {
 		eat(T_ADD);
@@ -194,7 +199,7 @@ void SyntaxAnalysis::E()
 		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
-		std::string imm = currentToken.getValue();  // save the imm value
+		std::string imm = currentToken.getValue();
 		eat(T_NUM);
 
 		if (!errorFound) {
@@ -204,7 +209,7 @@ void SyntaxAnalysis::E()
 			InstructionStruct* instr = new InstructionStruct(m_position++, I_ADDI, dst, src);
 			instr->m_def = dst;
 			instr->m_use = src;
-			instr->m_immediat = std::stoi(imm);  // store the imm value
+			instr->m_immediat = std::stoi(imm);
 			m_instructions.push_back(instr);
 		}
 	}
@@ -290,7 +295,7 @@ void SyntaxAnalysis::E()
 
 		if (!errorFound) {
 			Variables dst, src;
-			// sw nema dst u smislu definicije — samo koristi registre
+			// sw nema dst u smislu definicije, samo koristi registre
 			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
 			src.push_back(findOrAddVariable(rb, Variable::REG_VAR));
 			buildInstruction(I_SW, dst, src);
@@ -301,7 +306,7 @@ void SyntaxAnalysis::E()
 		std::string rs = currentToken.getValue();
 		eat(T_R_ID);
 		eat(T_COMMA);
-		std::string label = currentToken.getValue();  // ← sačuvaj
+		std::string label = currentToken.getValue();
 		eat(T_ID);
 
 		if (!errorFound) {
@@ -309,19 +314,19 @@ void SyntaxAnalysis::E()
 			src.push_back(findOrAddVariable(rs, Variable::REG_VAR));
 			InstructionStruct* instr = new InstructionStruct(m_position++, I_BLTZ, dst, src);
 			instr->m_use = src;
-			instr->m_label = label;  // ← upiši
+			instr->m_label = label;
 			m_instructions.push_back(instr);
 		}
 	}
 	else if (currentToken.getType() == T_B) {
 			eat(T_B);
-			std::string label = currentToken.getValue();  // ← sačuvaj
+			std::string label = currentToken.getValue();
 			eat(T_ID);
 
 			if (!errorFound) {
 				Variables dst, src;
 				InstructionStruct* instr = new InstructionStruct(m_position++, I_B, dst, src);
-				instr->m_label = label;  // ← upiši
+				instr->m_label = label;
 				m_instructions.push_back(instr);
 			}
 	}
@@ -428,7 +433,6 @@ void SyntaxAnalysis::buildInstruction(InstructionType type, Variables& dst, Vari
 }
 
 void SyntaxAnalysis::buildControlFlow() {
-	// Build label -> instruction map
 	std::map<std::string, InstructionStruct*> labelMap;
 	for (auto instr : m_instructions) {
 		if (!instr->m_label.empty() &&
@@ -443,7 +447,6 @@ void SyntaxAnalysis::buildControlFlow() {
 		InstructionStruct* cur = *it;
 
 		if (cur->m_type == I_B) {
-			// unconditional jump - only successor is the target
 			if (labelMap.count(cur->m_label)) {
 				InstructionStruct* target = labelMap[cur->m_label];
 				cur->m_succ.push_back(target);
@@ -451,7 +454,6 @@ void SyntaxAnalysis::buildControlFlow() {
 			}
 		}
 		else if (cur->m_type == I_BLTZ) {
-			// conditional branch - fall-through AND target
 			if (next != m_instructions.end()) {
 				cur->m_succ.push_back(*next);
 				(*next)->m_pred.push_back(cur);
@@ -463,7 +465,6 @@ void SyntaxAnalysis::buildControlFlow() {
 			}
 		}
 		else {
-			// normal sequential flow
 			if (next != m_instructions.end()) {
 				cur->m_succ.push_back(*next);
 				(*next)->m_pred.push_back(cur);
