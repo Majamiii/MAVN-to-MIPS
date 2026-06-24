@@ -170,7 +170,7 @@ stack<Variable*>* doSimplification(InterferenceGraph* ig, int degree) {
 
     while (removedCount < (int)ig->variables->size()){
 
-		// da li je pronadjena varijabla sa stepenom manjem od degree
+		// da li je pronadjena promenljiva sa stepenom manjim od degree
         bool found = false;
 
         for (auto it = ig->variables->begin(); it != ig->variables->end(); ++it) {

@@ -37,8 +37,9 @@ bool LexicalAnalysis::Do(string& funcName)
 				tokenList.push_back(token);
 
 				Token nextToken = getNextTokenLex();
-				while (nextToken.getType() == T_WHITE_SPACE)
+				while (nextToken.getType() == T_WHITE_SPACE) {
 					nextToken = getNextTokenLex();
+				}
 
 				// provera da li ime funkcije krece malim slovom
 				if (nextToken.getType() != T_ID)
@@ -59,8 +60,9 @@ bool LexicalAnalysis::Do(string& funcName)
 				tokenList.push_back(token);
 
 				Token nextToken = getNextTokenLex();
-				while (nextToken.getType() == T_WHITE_SPACE)
+				while (nextToken.getType() == T_WHITE_SPACE) {
 					nextToken = getNextTokenLex();
+				}
 
 				if (nextToken.getType() != T_M_ID)
 				{

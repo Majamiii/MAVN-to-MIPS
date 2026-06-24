@@ -130,10 +130,8 @@ void main()
 		printInstructions(instructions);
 		cout << "*******************************************************************\n\n\n";
 
-		// 2) simplify
 		simplificationStack = doSimplification(ig, __REG_NUMBER__);
 
-		// 3) spill
 		if (simplificationStack == NULL)
 		{
 			if (ig != NULL && ig->values != NULL)
@@ -144,74 +142,53 @@ void main()
 		}
 		else
 		{
-			// 4) select
 			if (doResourceAllocation(simplificationStack, ig) == true)
 			{
-				//if (checkResourceAllocation(ig) == true)
-				if(true)
-				{
 
-					// 5) remove unnecessary move operation
-					// Instructions* noMoveInstr = removeMove(&instructions);
-
-					// 6) final print
-					cout << "Resource allocation finished successfully!" << endl;
-					printVariables(*(ig->variables));
-					cout << "\nInstruction list:\n";
-					printInstructions(instructions);
+				cout << "Resource allocation finished successfully!" << endl;
+				printVariables(*(ig->variables));
+				cout << "\nInstruction list:\n";
+				printInstructions(instructions);
 
 
-					// -----------------------------------------------------------------------------
+				// -----------------------------------------------------------------------------
 
 
-					cout << endl << "---------------------------------------------" << endl;
-					cout << "Starting writing MIPS file..." << endl << endl;
+				cout << endl << "---------------------------------------------" << endl;
+				cout << "Starting writing MIPS file..." << endl << endl;
 
 
-					Variables memVariables = filterMemVariables(syntax.getVariables());
+				Variables memVariables = filterMemVariables(syntax.getVariables());
 
-					cout << "Memory variables list:" << endl;
-					printVariables(memVariables);
-					cout << endl;
+				cout << "Memory variables list:" << endl;
+				printVariables(memVariables);
+				cout << endl;
 
-					// funcName is already set by lexical analysis
+				// funcName is already set by lexical analysis
 
-					size_t dot_pos = fileName.rfind('.');
-					fileName.erase(dot_pos);
-					fileName.append(".mips");
+				size_t dot_pos = fileName.rfind('.');
+				fileName.erase(dot_pos);
+				fileName.append(".o");
 
-					if (generateMIPS(memVariables, funcName, instructions, fileName)) {
+				if (generateMIPS(memVariables, funcName, instructions, fileName)) {
 
-						cout << "Generated MIPS code: " << endl << endl;
+					cout << "Generated MIPS code: " << endl << endl;
 
-						ifstream file(fileName);
-						if (!file.is_open()) {
-							cerr << "Error: Could not open the file!" << endl;
-						}
-						else {
-
-							string line;
-
-							while (getline(file, line)) {
-								cout << line << '\n';
-							}
-							file.close();
-						}
-						cout << endl << endl;
-						cout << "MIPS code generation finished successfully!" << endl << endl;
+					ifstream file(fileName);
+					if (!file.is_open()) {
+						cerr << "Error: Could not open the file!" << endl;
 					}
-					else
-					{
-						if (ig != NULL && ig->values != NULL)
-						{
-							freeInterferenceGraph(ig);
+					else {
+
+						string line;
+
+						while (getline(file, line)) {
+							cout << line << '\n';
 						}
-						throw runtime_error("\nException! MIPS code generation failed!\n");
+						file.close();
 					}
-
-
-					// -----------------------------------------------------------------------------
-
+					cout << endl << endl;
+					cout << "MIPS code generation finished successfully!" << endl << endl;
 				}
 				else
 				{
@@ -219,8 +196,12 @@ void main()
 					{
 						freeInterferenceGraph(ig);
 					}
-					throw runtime_error("\nException! Allocation failed!\n");
+					throw runtime_error("\nException! MIPS code generation failed!\n");
 				}
+
+
+				// -----------------------------------------------------------------------------
+
 			}
 			else
 			{
